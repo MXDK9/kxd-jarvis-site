@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="KXD AI - JARVIS Advanced Intelligence Platform powered by Gemini AI" />
+  <meta name="description" content="KXD AI - JARVIS Advanced Intelligence Platform powered by KXD Holographic AI" />
   <title>KXD AI - J.A.R.V.I.S. Advanced Intelligence</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -11,7 +11,7 @@
 <body>
 <div id="boot-overlay">
   <div class="boot-logo">KXD <em>AI</em></div>
-  <div class="boot-tagline">J.A.R.V.I.S. - ADVANCED INTELLIGENCE - GEMINI POWERED</div>
+  <div class="boot-tagline">J.A.R.V.I.S. - ADVANCED INTELLIGENCE - KXD POWERED</div>
   <div class="boot-bar-wrap">
     <div class="boot-bar-bg"><div id="boot-fill"></div></div>
     <div id="boot-label">Initializing neural core...</div>
@@ -27,7 +27,7 @@
       </div>
       <div>
         <div class="hdr-title">KXD AI &nbsp;&#183;&nbsp; J.A.R.V.I.S.</div>
-        <div class="hdr-sub">ADVANCED INTELLIGENCE PLATFORM - GEMINI 2.0 FLASH POWERED</div>
+        <div class="hdr-sub">ADVANCED INTELLIGENCE PLATFORM - KXD HOLOGRAPHIC POWERED</div>
       </div>
     </div>
     <div class="hdr-center">
@@ -53,7 +53,7 @@
       <div class="card-hd">ARC REACTOR</div>
       <div class="reactor-wrap"><canvas id="reactor-cvs" width="200" height="200"></canvas></div>
       <div class="metric"><div class="metric-row"><span class="mlbl">REACTOR OUTPUT</span><span class="mval" style="color:#00ff88;">3.00 GW</span></div><div class="mbar"><div class="mfill" style="width:96%"></div></div></div>
-      <div class="metric"><div class="metric-row"><span class="mlbl">GEMINI AI CORE</span><span class="mval">ACTIVE</span></div><div class="mbar"><div class="mfill" style="width:88%;background:linear-gradient(90deg,#5027b0,#a855f7)"></div></div></div>
+      <div class="metric"><div class="metric-row"><span class="mlbl">KXD AI CORE</span><span class="mval">ACTIVE</span></div><div class="mbar"><div class="mfill" style="width:88%;background:linear-gradient(90deg,#5027b0,#a855f7)"></div></div></div>
     </div>
     <div class="card">
       <div class="card-hd">SYSTEM STATUS</div>
@@ -117,15 +117,15 @@
     </div>
     <div class="card">
       <div class="card-hd">AI CONNECTIONS</div>
-      <div class="stat"><span class="slbl">GEMINI 2.0 FLASH</span><span class="sval g">LINKED &#10003;</span></div>
+      <div class="stat"><span class="slbl">KXD MULTIMODAL CORE</span><span class="sval g">LINKED &#10003;</span></div>
       <div class="stat"><span class="slbl">OPENAI GPT-4o</span><span class="sval" id="openai-status">KEY NEEDED</span></div>
       <div class="stat"><span class="slbl">WEATHER API</span><span class="sval g">WTTR.IN &#10003;</span></div>
       <div class="stat"><span class="slbl">WIKIPEDIA</span><span class="sval g">LINKED &#10003;</span></div>
     </div>
   </aside>
   <footer id="ftr">
-    <span class="ftxt">STARK INDUSTRIES &#183; <span>KXD AI</span> v9.0.0 &#183; GEMINI POWERED</span>
-    <div class="fpills"><span class="fp">ENCRYPTED</span><span class="fp">VOICE ENABLED</span><span class="fp">GEMINI LIVE</span></div>
+    <span class="ftxt">STARK INDUSTRIES &#183; <span>KXD AI</span> v9.0.0 &#183; KXD POWERED</span>
+    <div class="fpills"><span class="fp">ENCRYPTED</span><span class="fp">VOICE ENABLED</span><span class="fp">KXD LIVE</span></div>
     <span class="ftxt">&#169; KXD AI &#183; <span>MDK SYSTEMS</span></span>
   </footer>
 </div>
@@ -133,10 +133,11 @@
   <div class="modal">
     <button class="modal-close" id="close-settings">&#x2715;</button>
     <div class="modal-title">&#9881; SYSTEM CONFIGURATION</div>
-    <div class="field"><label>GEMINI API KEY (Google AI Studio - FREE)</label><input type="password" id="s-gemini" placeholder="AIzaSy..." autocomplete="off" /><div class="hint">Get free key at aistudio.google.com</div></div>
+    <div class="field"><label>KXD API KEY (Google AI Studio - FREE)</label><input type="password" id="s-gemini" placeholder="AIzaSy..." autocomplete="off" /><div class="hint">Get free key at aistudio.google.com</div></div>
     <div class="field"><label>OPENAI API KEY (ChatGPT - Optional)</label><input type="password" id="s-openai" placeholder="sk-..." autocomplete="off" /></div>
-    <div class="field"><label>AI ENGINE</label><select id="s-mode"><option value="gemini">Gemini 2.0 Flash (Recommended - Free)</option><option value="openai">OpenAI GPT-4o Mini (Paid)</option></select></div>
+    <div class="field"><label>AI ENGINE</label><select id="s-mode"><option value="gemini">KXD Holographic Core (Recommended - Free)</option><option value="openai">OpenAI GPT-4o Mini (Paid)</option></select></div>
     <div class="field" style="display:flex;align-items:center;gap:12px;"><input type="checkbox" id="s-voice" checked style="width:auto;accent-color:var(--c-blue);" /><label style="margin:0;" for="s-voice">Enable voice responses (TTS)</label></div>
+    <div class="field" style="display:flex;align-items:center;gap:12px;"><input type="checkbox" id="s-always-on" style="width:auto;accent-color:var(--c-blue);" /><label style="margin:0;" for="s-always-on">Always on alert (Continuous Listening / Wake word)</label></div>
     <button class="btn-primary" id="save-settings">SAVE CONFIGURATION</button>
   </div>
 </div>
