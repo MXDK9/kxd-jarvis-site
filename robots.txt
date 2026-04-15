@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mxdk9.github.io/kxd-jarvis-site/sitemap.xml
