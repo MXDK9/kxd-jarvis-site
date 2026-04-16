@@ -1,14 +1,14 @@
-# KXD AI — J.A.R.V.I.S. Advanced Intelligence Platform
+# KXD AI — J.A.R.V.I.S. Nova Heart Edition
+  
+> **"Good morning, boss. Pulse initialized. All systems synchronized."**
 
-> **"Good morning, boss. All systems nominal."**
-
-A fully-featured Iron Man-inspired AI voice assistant web app, powered by **Google Gemini 2.0 Flash** and optionally **ChatGPT**. Deployed via GitHub Pages.
+A high-end, Iron Man-inspired AI platform powered by **Google Gemini 1.5/2.0 Flash**. This repository hosts the J.A.R.V.I.S. Web HUD and synchronizes with the Nova Heart Desktop Python core.
 
 ---
 
 ## 🌐 Live Site
 
-**https://YOUR_USERNAME.github.io/kxd-jarvis-site/**
+**https://mxdk9.github.io/kxd-jarvis-site/**
 
 ---
 
@@ -35,26 +35,11 @@ A fully-featured Iron Man-inspired AI voice assistant web app, powered by **Goog
 ```bash
 git init
 git add .
-git commit -m "🚀 KXD AI JARVIS v9.0.0 — Launch"
+git commit -m "🚀 KXD AI JARVIS v10.0.0 — Nova Heart Edition"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/kxd-jarvis-site.git
+git remote add origin https://github.com/mxdk9/kxd-jarvis-site.git
 git push -u origin main
 ```
-
-Then go to: **GitHub Repo → Settings → Pages → Source: main branch**
-
----
-
-## ⚙️ API Keys
-
-Click the **⚙️ Settings** button in the top-right corner of the app to configure:
-
-| Key | Source | Cost |
-|---|---|---|
-| Gemini API Key | [aistudio.google.com](https://aistudio.google.com) | **FREE** |
-| OpenAI API Key | [platform.openai.com](https://platform.openai.com) | Paid (~$5 credit) |
-
-Keys are stored in `localStorage` — never sent to any external server except the official APIs.
 
 ---
 
@@ -64,28 +49,8 @@ Keys are stored in `localStorage` — never sent to any external server except t
 |---|---|
 | "What time is it?" | Tells the exact time |
 | "Weather in Tokyo" | Live weather data |
-| "Tell me about black holes" | Wikipedia + AI summary |
-| "Open YouTube" | Opens YouTube |
-| "Play Bohemian Rhapsody" | YouTube search |
 | "Search for quantum computing" | Google search |
 | "Calculate 15 percent of 230" | Computes the answer |
-| "Set a reminder in 5 minutes" | Browser notification |
-| "Go fullscreen" | Enters fullscreen |
-| "Inspire me" | Motivational quote |
-| "Tell me a joke" | JARVIS wit |
-| "Open Gmail / GitHub / Netflix..." | Opens any site |
-
----
-
-## 🏗️ Tech Stack
-
-- Pure **HTML5 + CSS3 + JavaScript** — zero build tools
-- **Google Gemini API** — primary AI brain
-- **Web Speech API** — voice in/out
-- **wttr.in** — live weather
-- **Wikipedia REST API** — knowledge base
-- **marked.js** — markdown rendering
-- **GitHub Pages** — free hosting
 
 ---
 
