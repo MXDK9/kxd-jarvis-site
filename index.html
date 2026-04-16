@@ -1,141 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="KD AI - The world's first advanced Emotional Intelligence platform. Experience natural, empathetic, and human-like AI interactions." />
-  <meta name="keywords" content="KD AI, KXD AI, Assistant, AI Persona, Emotional Intelligence, Future AI" />
-  <meta name="author" content="KXD" />
-  <link rel="canonical" href="https://mxdk9.github.io/kxd-jarvis-site/" />
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://mxdk9.github.io/kxd-jarvis-site/" />
-  <meta property="og:title" content="KD AI - Advanced Emotional Intelligence" />
-  <meta property="og:description" content="Experience the next generation of AI that understands emotion. Natural, empathetic, and human-like." />
-  <meta property="og:image" content="https://mxdk9.github.io/kxd-jarvis-site/hero.png" />
-
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://mxdk9.github.io/kxd-jarvis-site/" />
-  <meta property="twitter:title" content="KD AI - Advanced Emotional Intelligence" />
-  <meta property="twitter:description" content="Experience the next generation of AI that understands emotion. Natural, empathetic, and human-like." />
-  <meta property="twitter:image" content="https://mxdk9.github.io/kxd-jarvis-site/hero.png" />
-
-  <title>KD AI | Advanced Emotional Intelligence</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KD AI | JARVIS AGENT MODE</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="agent-mode">
+    <canvas id="bg-canvas"></canvas>
 
-<!-- AUTHENTICATION SCREEN -->
-<div id="auth-screen">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <div class="orb small"></div>
-      KD <span>AI</span>
+    <!-- STARK-GRADE BOOT SEQUENCE -->
+    <div id="boot-overlay">
+        <div class="boot-content">
+            <div class="boot-logo">KXD</div>
+            <div class="boot-status" id="boot-status">INITIALIZING NEURAL CORE...</div>
+            <div class="boot-progress-bar"><div id="boot-progress"></div></div>
+        </div>
     </div>
-    <h2>Welcome Back, Creator</h2>
-    <p>Sign in to access advanced emotional intelligence.</p>
-    
-    <div class="auth-buttons">
-      <button class="auth-btn google" onclick="login()">
-        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-        Continue with Google
-      </button>
-      <button class="auth-btn apple" onclick="login()">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.78 1.18-.19 2.31-.88 3.5-.84 1.5.15 2.53.7 3.28 1.8-2.67 1.4-2.18 4.7.75 5.79-.62 1.69-1.41 3.48-2.61 5.44zm-4.71-12.8c-.1-.01-.2-.01-.32-.01-1.37-.11-2.63-.88-3.41-1.95.84-1.23 2.51-1.97 3.73-1.87 0 .1.02.21.02.32.18 1.25-.56 2.51-1.31 3.3.47.1 1.04.18 1.29.21z"/></svg>
-        Continue with Apple
-      </button>
-      <div class="divider"><span>OR</span></div>
-      <button class="auth-btn email" onclick="login()">Sign in with Email</button>
-    </div>
-  </div>
-</div>
 
-<div id="app" style="display:none;">
-  <!-- MAIN AI ORB -->
-  <div class="ai-container">
-     <div class="orb-container" id="orb-wrapper">
-        <div class="orb-ring ring1"></div>
-        <div class="orb-ring ring2"></div>
-        <div class="orb-ring ring3"></div>
-        <div class="orb main" id="ai-orb"></div>
-     </div>
-     <div class="ai-status" id="status-txt">ONLINE</div>
-     <div class="ai-instruction">"Call me KD"</div>
-  </div>
+    <div class="container glass" id="main-container">
+        <header>
+            <div class="status-box">
+                <span id="status-dot"></span>
+                <span id="status-txt">SYSTEM READY</span>
+            </div>
+            <h1>JARVIS <span class="version">v11.0</span></h1>
+        </header>
 
-  <header id="hdr">
-    <div class="hdr-brand">KD <span>AI</span></div>
-    <div class="hdr-btns">
-      <button class="h-btn" id="settings-btn" title="Settings">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-      </button>
-      <button class="h-btn" id="fs-btn" title="Fullscreen">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-      </button>
-      <button class="h-btn" id="logout-btn" title="Sign Out" onclick="logout()">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path></svg>
-      </button>
-    </div>
-  </header>
+        <main>
+            <div class="orb-container">
+                <div id="ai-orb"></div>
+                <!-- NEURAL SYNCHRONIZATION VISUALIZER -->
+                <div class="v-equalizer" id="equalizer">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                </div>
+            </div>
 
-  <main id="ctr">
-    <div id="chat-wrapper">
-       <div id="chat" role="log" aria-live="polite"></div>
-    </div>
-    <div id="input-wrap">
-      <input type="text" id="txt" placeholder="Ask KD anything..." autocomplete="off" spellcheck="false" />
-      <button id="send-btn">
-         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-      </button>
-    </div>
-    
-    <!-- Action controls on bottom -->
-    <div class="bottom-controls">
-      <button class="mic-btn" id="mic-btn" title="Wake Up KD">
-         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-      </button>
-      <button class="stop-btn" id="stop-btn" title="Stop Speaking">
-         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"></rect></svg>
-      </button>
-    </div>
-  </main>
-</div>
+            <div id="response-area" class="glass-inner">
+                <p id="ai-text">Standing by for instruction, Boss.</p>
+            </div>
+        </main>
 
-<!-- SETTINGS MODAL -->
-<div class="modal-overlay" id="modal-settings">
-  <div class="modal">
-    <button class="modal-close" id="close-settings">&#x2715;</button>
-    <div class="modal-title">SYSTEM CONFIGURATION</div>
-    
-    <div class="field">
-       <label>KXD API KEY (Google AI Studio - FREE)</label>
-       <input type="password" id="s-gemini" placeholder="AIzaSy..." autocomplete="off" />
-       <div class="hint">Get free key at aistudio.google.com</div>
+        <footer>
+            <div class="controls">
+                <button id="mic-btn" class="glow-btn">🎤</button>
+                <input type="text" id="user-input" placeholder="Type a command..." class="glass-input">
+                <button id="send-btn" class="glow-btn">➤</button>
+            </div>
+            <div id="toast"></div>
+        </footer>
     </div>
-    
-    <div class="field" style="display:flex;align-items:center;gap:12px;margin-top:20px;">
-       <input type="checkbox" id="s-voice" checked style="width:auto;accent-color:var(--c-accent);" />
-       <label style="margin:0;" for="s-voice">Enable Voice Responses</label>
-    </div>
-    
-    <div class="field" style="display:flex;align-items:center;gap:12px;">
-       <input type="checkbox" id="s-always-on" style="width:auto;accent-color:var(--c-accent);" />
-       <label style="margin:0;" for="s-always-on">Always On Alert (Wake word: "KD")</label>
-    </div>
-    
-    <button class="btn-primary" id="save-settings">SAVE CONFIGURATION</button>
-  </div>
-</div>
 
-<div id="toast"></div>
+    <!-- DIAGNOSTICS HUD -->
+    <div class="diagnostics-hud">
+        <div class="scan-line"></div>
+        <div class="hud-data top-left">UPLINK: SECURE</div>
+        <div class="hud-data top-right">CORE: OPTIMAL</div>
+        <div class="hud-data bottom-left">LATENCY: 12ms</div>
+        <div class="hud-data bottom-right">ENCRYPTION: AES-256</div>
+    </div>
 
-<!-- Background particles -->
-<canvas id="bg-canvas"></canvas>
-<script src="particles.js"></script>
-<script src="app.js"></script>
+    <script src="particles.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
