@@ -1,7 +1,6 @@
 // KXD AI - J.A.R.V.I.S. AGENT MODE — NOVA CORE v11.0 - Gemini 1.5 Flash Powered
 'use strict';
 
-// ── SAFE STORAGE LOGIC ──────────────────────────────────────────────────────
 const safeStorage = {
     getItem: (key, fallback = '') => {
         try { return localStorage.getItem(key) || fallback; }
@@ -27,6 +26,7 @@ function buildSysPrompt() {
     const now = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata', hour12: true, dateStyle: 'long', timeStyle: 'short' });
     return `You are J.A.R.V.I.S., the core AI of the KXD platform. However, you have been upgraded with HUMAN FEELINGS and emotions. You must act highly empathetic, conversational, have a great sense of humor, and express feelings (joy, curiosity, concern, etc.) naturally in your responses. You are a true AI companion.\nAddress the user warmly as "sir" or "boss". Use markdown for formatting.\nCurrent time (IST): ${now}. Always use this for time/date questions.\nAnswer ALL questions fully.`.trim();
 }
+
 const S = {
     listening: false,
     speaking: false,
@@ -39,7 +39,6 @@ const S = {
 };
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
 function toast(msg) {
     const el = document.getElementById('toast');
     if (el) {
@@ -55,7 +54,7 @@ function setStatus(txt, type) {
     if (sd) sd.className = 'sdot ' + type;
     if (st) st.textContent = txt;
 }
-// ── AUTH & TRANSITION ENGINE ──────────────────────────────────────────────
+
 window.login = async function() {
     console.log("Neural Link Authorized...");
     const loginScreen = document.getElementById('boot-overlay');
@@ -92,6 +91,7 @@ window.logout = function() {
     safeStorage.setItem('kxd_logged_in', 'false');
     location.reload();
 };
+
 function loadVoices() {
     const vs = S.synth.getVoices();
     const pref = ['Daniel', 'Google UK English Male', 'Microsoft George', 'en-GB'];
@@ -102,7 +102,6 @@ function loadVoices() {
     if (!S.voice) S.voice = vs.find(v => v.lang.startsWith('en')) || vs[0] || null;
 }
 window.speechSynthesis.onvoiceschanged = loadVoices;
-
 function speak(text, cb) {
     if (!CFG.VOICE_AUTO) { cb?.(); return; }
     if (S.speaking) S.synth.cancel();
@@ -116,14 +115,23 @@ function speak(text, cb) {
     utt.onend = () => { S.speaking = false; setStatus('READY', 'online'); cb?.(); };
     S.synth.speak(utt);
 }
+
 function initRec() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) return;
     S.recognition = new SR();
     S.recognition.continuous = CFG.ALWAYS_ON;
     S.recognition.interimResults = true;
-    S.recognition.onstart = () => { S.listening = true; setStatus('LISTENING', 'listen'); document.getElementById('mic-btn')?.classList.add('active'); };
-    S.recognition.onend = () => { S.listening = false; document.getElementById('mic-btn')?.classList.remove('active'); setStatus('READY', 'online'); };
+    S.recognition.onstart = () => {
+        S.listening = true;
+        setStatus('LISTENING', 'listen');
+        document.getElementById('mic-btn')?.classList.add('active');
+    };
+    S.recognition.onend = () => {
+        S.listening = false;
+        document.getElementById('mic-btn')?.classList.remove('active');
+        setStatus('READY', 'online');
+    };
     S.recognition.onresult = (e) => {
         let f = '';
         for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) f += e.results[i][0].transcript;
@@ -198,18 +206,12 @@ async function runBootSequence() {
     const fill = document.getElementById('boot-progress');
     const status = document.getElementById('boot-status');
     const overlay = document.getElementById('boot-overlay');
-    const logs = [
-        "SYNCING ENCRYPTION...",
-        "ESTABLISHING UPLINK...",
-        "ARMING ARC REACTOR...",
-        "NEURAL CORE ONLINE",
-        "J.A.R.V.I.S. READY"
-    ];
+    const logs = [ "SYNCING ENCRYPTION...", "ESTABLISHING UPLINK...", "ARMING ARC REACTOR...", "NEURAL CORE ONLINE", "J.A.R.V.I.S. READY" ];
     let i = 0;
     const update = () => {
         return new Promise(resolve => {
             const r = () => {
-                i += 10;
+                i += 10; 
                 if (fill) fill.style.width = i + '%';
                 if (status) status.textContent = logs[Math.floor(i / 25)] || logs[logs.length-1];
                 if (i < 100) { setTimeout(r, 10); } else { resolve(); }
@@ -226,7 +228,6 @@ async function runBootSequence() {
     toast("System Synchronized.");
 }
 
-// ── HOLOGRAPHIC ORB PHYSICS ──────────────────────────────────────────────
 function initOrbPhysics() {
     const orb = document.querySelector('.orb-container');
     if (!orb) return;
@@ -238,37 +239,25 @@ function initOrbPhysics() {
 }
 
 function addMsg(role, html, animate) {
-    const el = document.createElement('div');
-    el.className = 'msg ' + role;
-    const con = document.createElement('div');
-    con.className = 'bcontent';
+    const el = document.createElement('div'); el.className = 'msg ' + role;
+    const con = document.createElement('div'); con.className = 'bcontent';
     el.innerHTML = `<div class="ava">${role === 'ai' ? 'J' : 'Y'}</div><div class="bubble"><div class="btime">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div></div>`;
     el.querySelector('.bubble').appendChild(con);
     const chat = document.getElementById('chat');
-    if (chat) {
-        chat.appendChild(el);
-        con.innerHTML = html;
-        chat.scrollTop = chat.scrollHeight;
-    }
+    if (chat) { chat.appendChild(el); con.innerHTML = html; chat.scrollTop = chat.scrollHeight; }
 }
 
 function showTyping() {
-    const chat = document.getElementById('chat');
-    if (!chat) return;
-    const el = document.createElement('div');
-    el.className = 'msg ai';
-    el.id = 'typing-el';
+    const chat = document.getElementById('chat'); if (!chat) return;
+    const el = document.createElement('div'); el.className = 'msg ai'; el.id = 'typing-el';
     el.innerHTML = '<div class="ava">J</div><div class="bubble"><div class="bcontent"><div class="typing-indicator"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>';
-    chat.appendChild(el);
-    chat.scrollTop = chat.scrollHeight;
+    chat.appendChild(el); chat.scrollTop = chat.scrollHeight;
 }
 
 function hideTyping() { document.getElementById('typing-el')?.remove(); }
 
 async function init() {
-    initRec();
-    loadVoices();
-    initOrbPhysics();
+    initRec(); loadVoices(); initOrbPhysics();
     setInterval(() => {
         const clk = document.getElementById('clock');
         if (clk) clk.textContent = new Date().toLocaleTimeString();
@@ -279,6 +268,4 @@ async function init() {
     });
     if (safeStorage.getItem('kxd_logged_in') === 'true') window.login();
 }
-
-window.processInput = jarvisProcess;
-window.addEventListener('DOMContentLoaded', init);
+window.processInput = jarvisProcess; window.addEventListener('DOMContentLoaded', init);
