@@ -1,67 +1,134 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>KD AI | JARVIS AGENT MODE</title>
+
     <link rel="stylesheet" href="style.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+
 </head>
+
 <body class="agent-mode">
+
     <canvas id="bg-canvas"></canvas>
 
+
+
     <!-- STARK-GRADE BOOT SEQUENCE -->
+
     <div id="boot-overlay">
+
         <div class="boot-content">
+
             <div class="boot-logo">KXD</div>
+
             <div class="boot-status" id="boot-status">INITIALIZING NEURAL CORE...</div>
+
             <div class="boot-progress-bar"><div id="boot-progress"></div></div>
+
         </div>
+
     </div>
+
+
 
     <div class="container glass" id="main-container">
+
         <header>
+
             <div class="status-box">
+
                 <span id="status-dot"></span>
+
                 <span id="status-txt">SYSTEM READY</span>
+
             </div>
+
             <h1>JARVIS <span class="version">v11.0</span></h1>
+
         </header>
 
+
+
         <main>
+
             <div class="orb-container">
+
                 <div id="ai-orb"></div>
+
                 <!-- NEURAL SYNCHRONIZATION VISUALIZER -->
+
                 <div class="v-equalizer" id="equalizer">
+
                     <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+
                 </div>
+
             </div>
+
+
 
             <div id="response-area" class="glass-inner">
+
                 <p id="ai-text">Standing by for instruction, Boss.</p>
+
             </div>
+
         </main>
 
+
+
         <footer>
+
             <div class="controls">
+
                 <button id="mic-btn" class="glow-btn">🎤</button>
+
                 <input type="text" id="user-input" placeholder="Type a command..." class="glass-input">
+
                 <button id="send-btn" class="glow-btn">➤</button>
+
             </div>
+
             <div id="toast"></div>
+
         </footer>
+
     </div>
+
+
 
     <!-- DIAGNOSTICS HUD -->
+
     <div class="diagnostics-hud">
+
         <div class="scan-line"></div>
+
         <div class="hud-data top-left">UPLINK: SECURE</div>
+
         <div class="hud-data top-right">CORE: OPTIMAL</div>
+
         <div class="hud-data bottom-left">LATENCY: 12ms</div>
+
         <div class="hud-data bottom-right">ENCRYPTION: AES-256</div>
+
     </div>
 
+
+
     <script src="particles.js"></script>
+
     <script src="app.js"></script>
+
 </body>
+
 </html>
+
