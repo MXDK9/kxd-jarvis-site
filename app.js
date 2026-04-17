@@ -41,6 +41,8 @@ async function boot(){
   addMsg('ai','<b>HI BOSS this your kxd AI JARVIS IS ONLINE</b>');
 }
 async function init(){
+  document.getElementById('auth-screen').style.display = 'none';
+  runBootSequence();
   initRec();
   loadVoices();
   updateClock();
@@ -49,3 +51,4 @@ async function init(){
 }
 window.processInput=jarvisProcess;
 window.addEventListener('DOMContentLoaded',init);
+
