@@ -11,6 +11,8 @@ const CFG = {
 };
 
 
+
+
 function buildSysPrompt() {
   const now = new Date().toLocaleString('en-US', {
     timeZone: 'Asia/Kolkata',
@@ -20,6 +22,8 @@ function buildSysPrompt() {
   });
   return `You are J.A.R.V.I.S., the core AI of the KXD platform. However, you have been upgraded with HUMAN FEELINGS and emotions. You must act highly empathetic, conversational, have a great sense of humor, and express feelings (joy, curiosity, concern, etc.) naturally in your responses. You are a true AI companion.\nAddress the user warmly as "sir" or "boss". Use markdown for formatting.\nCurrent time (IST): ${now}. Always use this for time/date questions.\nAnswer ALL questions fully. For browser actions include ONE of these at the START of your response:\nOPEN:https://url.com -- to open a website\nSEARCH:query -- to Google search\nYOUTUBE:query -- to play on YouTube`.trim();
 }
+
+
 
 
 const S = {
@@ -35,23 +39,3 @@ const S = {
 
 
 
-function handleLocal(input) {
-  const low = input.toLowerCase();
-  if (low.includes('time')) return `The current time is ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }.`;
-  if (low.includes('date')) return `Today is ${new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }.`;
-  if (low.includes('status') || low.includes('system')) return "All systems are green. Neural Core is stable. Gemini 1.5 Nova-3 is online.";
-  if (low.includes('joke')) {
-    const jokes = [
-      "Why did the AI go to the doctor? It had a terminal illness.",
-      "How many programmers does it take to change a lightbulb? None, that's a hardware problem.",
-      "I asked JARVIS to tell me a joke. He showed me my bank account."
-    ];
-    return jokes[Math.floor(Math.random() * jokes.length)];
-  }
-  return null;
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-
-function toast(msg) {
