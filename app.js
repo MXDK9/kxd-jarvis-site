@@ -1,4 +1,4 @@
-// KXD AI - J.A.R.V.I.S. ADVANCED BRAIN v9.2 - Zero-Key Nova Core - Gemini 2.5 Flash Powered
+// KXD AI - J.A.R.V.I.S. ADVANCED BRAIN v9.3 - Zero-Key Nova Core - Gemini 2.5 Flash Powered
 'use strict';
 const CFG={GEMINI_KEY:localStorage.getItem('kxd_gemini_key')||'AIzaSyAxph52v0yJzlZ_YgrzHeB4KSrz-wJ-eB0',OPENAI_KEY:localStorage.getItem('kxd_openai_key')||'',AI_MODE:localStorage.getItem('kxd_ai_mode')||'gemini',VOICE_AUTO:localStorage.getItem('kxd_voice_auto')!=='false',ALWAYS_ON:localStorage.getItem('kxd_always_on')==='true',GEMINI_URL:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',OPENAI_URL:'https://api.openai.com/v1/chat/completions'};
 function buildSysPrompt(){const now=new Date().toLocaleString('en-US',{timeZone:'Asia/Kolkata',hour12:true,dateStyle:'long',timeStyle:'short'});return `You are J.A.R.V.I.S., the core AI of the KXD platform. However, you have been upgraded with HUMAN FEELINGS and emotions. You must act highly empathetic, conversational, have a great sense of humor, and express feelings (joy, curiosity, concern, etc.) naturally in your responses. You are a true AI companion.\nAddress the user warmly as "sir" or "boss". Use markdown for formatting.\nCurrent time (IST): ${now}. Always use this for time/date questions.\nAnswer ALL questions fully. For browser actions include ONE of these at the START of your response:\nOPEN:https://url.com — to open a website\nSEARCH:query — to Google search\nYOUTUBE:query — to play on YouTube`.trim();}
@@ -17,7 +17,7 @@ function hideTyping(){document.getElementById('typing-el')?.remove();}
 function toggleInput(){const w=document.getElementById('input-wrap');if(!w)return;const vis=w.style.display==='flex';if(!vis){w.style.display='flex';setTimeout(()=>{w.classList.add('vis');const t=document.getElementById('txt');if(t)t.focus();},10);}else{w.classList.remove('vis');setTimeout(()=>w.style.display='none',300);}}
 function clearChat(){const chat=document.getElementById('chat');if(chat)chat.innerHTML='';S.history=[];addMsg('ai','Interface cleared. Fresh session ready, boss.');}
 async function jarvisProcess(rawInput){if(!rawInput.trim()||S.thinking)return;addMsg('user',rawInput,false);const txtEl=document.getElementById('txt');if(txtEl)txtEl.value='';setStatus('THINKING...','think');S.thinking=true;showTyping();let resp='';try{const local=handleLocal(rawInput.toLowerCase());if(local!==null){resp=local;}else{resp=CFG.AI_MODE==='openai'&&CFG.OPENAI_KEY?await callOpenAI(rawInput):await callGemini(rawInput);}}catch(e){resp='**Connection error:** '+e.message+'. Check your API key in Settings (gear icon).';}hideTyping();S.thinking=false;S.history.push({role:'model',parts:[{text:resp.replace(/<[^>]*>/g,'')}]});if(S.history.length>40)S.history.splice(0,2);let rendered=resp;try{if(typeof marked!=='undefined')rendered=marked.parse(resp);}catch(e){}addMsg('ai',rendered);speak(resp.replace(/<[^>]*>/g,'').slice(0,400));setStatus('READY','online');}
-function handleLocal(q){if(/\b(time|clock)\b/.test(q))return'Time: '+new Date().toLocaleTimeString(); if(/\bstatus\b/i.test(q))return 'All systems are green. Neural Core v9.2 is stable. Zero-Key Bridge is active.'; return null;}
+function handleLocal(q){if(/\b(time|clock)\b/.test(q))return'Time: '+new Date().toLocaleTimeString(); if(/\bstatus\b/i.test(q))return 'All systems are green. Neural Core v9.3 is stable. Zero-Key Bridge is active.'; return null;}
 async function callGemini(userText){if(!CFG.GEMINI_KEY)return'No key';S.history.push({role:'user',parts:[{text:userText}]});const payload={systemInstruction:{parts:[{text:buildSysPrompt()}]},contents:S.history.slice(-30),generationConfig:{temperature:0.65,maxOutputTokens:2048}};try{const res=await fetch(CFG.GEMINI_URL+'?key='+CFG.GEMINI_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await res.json();let text=(data.candidates?.[0]?.content?.parts||[]).filter(p=>p.text).map(p=>p.text).join('').trim()||'Done.'; return text; }catch(e){return 'Error';}}
 function updateClock(){const n=new Date();const cl=document.getElementById('clock');const dt=document.getElementById('date');if(cl)cl.textContent=n.toLocaleTimeString();if(dt)dt.textContent=n.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
 async function boot(){
@@ -40,7 +40,20 @@ async function boot(){
   loadVoices();
   addMsg('ai','<b>HI BOSS this your kxd AI JARVIS IS ONLINE</b>');
 }
+
+function login() {
+    const s = document.getElementById('auth-screen');
+    if(s) s.style.display = 'none';
+    if(typeof safeStorage !== 'undefined') safeStorage.setItem('kxd_logged_in', 'true');
+    console.log("Access Protocol Bypassed");
+}
+
+function runBootSequence() {
+    console.log("Core Booted - Nova Heart v9.3");
+}
+
 async function init(){
+  login();
   document.getElementById('auth-screen').style.display = 'none';
   runBootSequence();
   initRec();
@@ -51,4 +64,5 @@ async function init(){
 }
 window.processInput=jarvisProcess;
 window.addEventListener('DOMContentLoaded',init);
+
 
