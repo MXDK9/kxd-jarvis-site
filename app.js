@@ -23,7 +23,8 @@ function init() {
     setInterval(updateDate, 1000);
     initRec();
     loadVoices();
-    addMsg('jarvis', 'Systems online. Welcome back, Boss.', true);
+    // Welcome message - DO NOT push to history because Gemini requires user to start
+    addMsg('jarvis', 'Systems online. Welcome back, Boss.', true, false);
 }
 
 function updateDate() {
@@ -45,20 +46,16 @@ function loadVoices() {
 
 window.speechSynthesis.onvoiceschanged = loadVoices;
 
-function addMsg(role, text, speakIt = false) {
+function addMsg(role, text, speakIt = false, pushToHistory = true) {
     const box = document.getElementById('chat-box');
     if (!box) return;
     const div = document.createElement('div');
     div.className = `msg ${role}`;
-    div.style.padding = '10px';
-    div.style.margin = '5px';
-    div.style.borderRadius = '5px';
-    div.style.backgroundColor = role === 'jarvis' ? 'rgba(0, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)';
     div.innerText = role === 'jarvis' ? `JARVIS: ${text}` : `BOSS: ${text}`;
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
     if (speakIt) speak(text);
-    S.history.push({ role: role === 'jarvis' ? 'model' : 'user', parts: [{ text }] });
+    if (pushToHistory) S.history.push({ role: role === 'jarvis' ? 'model' : 'user', parts: [{ text }] });
 }
 
 async function callGemini(prompt) {
@@ -74,9 +71,11 @@ async function callGemini(prompt) {
         if (data.candidates && data.candidates[0].content.parts[0].text) {
             return data.candidates[0].content.parts[0].text;
         }
+        console.error('Gemini Error:', data);
         return "I am unable to process that right now, Boss.";
     } catch (e) {
-        return "Neural Core Error, Boss.";
+        console.error('Fetch Error:', e);
+        return "Neural Core connection failed, Boss.";
     }
 }
 
