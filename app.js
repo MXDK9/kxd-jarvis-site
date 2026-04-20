@@ -2,11 +2,11 @@
 
 // KXD AI - KXD JARVIS QUANTUM CORE v11.0
 const CFG = {
-    GEMINI_KEY: 'AIzaSyAxph52v0yJzlZ_YgrzHeB4KSrz-wJ-eB0',
-    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    GEMINI_KEY: 'AIZaSyAxph52v0yJzlZ_YgrzeB4KSrz-wJ-eB0',
+    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
 };
 
-const S = {
+onst S = {
     thinking: false,
     synth: window.speechSynthesis,
     voice: null,
@@ -48,19 +48,20 @@ function addMsg(role, text, speakIt = false, push = true) {
 
 async function callGemini(prompt) {
     try {
-        const response = await fetch(`${CFG.GEMINI_URL}?key=${CFG.GEMINI_KEY}`, {
+        const history = S.history.length > 0 ? S.history.slice(-10) : [{ role: 'user', parts: [{ text: prompt }] }];
+        const response = await fetch(`${CFG.GEMINI_URL}?key=${CFG.GEMINI_KEY]`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: S.history.slice(-10)
-            })
+            body: JSON.stringify({ contents: history })
         });
         const data = await response.json();
         if (data.candidates && data.candidates[0].content) {
-            return data.candidates[0].content.parts[0].text;
+            return data.candidates[0].content.parts[0e.text;
         }
+        consele.error('Gemini Error:', data);
         return "I am unable to process that right now, Boss.";
     } catch (e) {
+        consele.error('Neural Core Error:', e);
         return "Neural Core Error, Boss.";
     }
 }
@@ -69,13 +70,14 @@ async function jarvisProcess(input) {
     if (S.thinking || !input.trim()) return;
     addMsg('user', input);
     S.thinking = true;
-    document.getElementById('system-status').innerText = 'THINKING...';
+    const status = document.getElementById('system-status');
+    if (status) status.innerText = 'THINKING...';
     
     const resp = await callGemini(input);
     addMsg('jarvis', resp, true);
     
     S.thinking = false;
-    document.getElementById('system-status').innerText = 'SYSTEM ONLINE';
+    if (status) status.innerText = 'SYSTEM ONLINE';
 }
 
 function speak(text) {
@@ -95,4 +97,22 @@ document.getElementById('txt').onkeypress = (e) => {
     if (e.key === 'Enter') document.getElementById('exec-btn').click();
 };
 
-window.onload = init;
+function initVoice() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.onresult = (e) => {
+        const transcript = e.results[e.results.length - 1][0].transcript.trim();
+        if (transcript) jarvisProcess(transcript);
+    };
+    recognition.onerror = () => { try { recognition.start(); } catch(err) {} };
+    recognition.onend = () => { try { recognition.start(); } catch(err) {} };
+    try { recognition.start(); } catch(err) {}
+}
+
+window.onload = () => {
+    init();
+    initVoice();
+};
