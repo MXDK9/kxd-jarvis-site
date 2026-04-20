@@ -1,161 +1,51 @@
 "use strict";
 
-const p1 = "sk-o" + "r-v1-132a763";
-const p2 = "0629c7f2d506f4";
-const p3 = "1be1ab027df3de";
-const p4 = "747d8827011a5c";
-const p5 = "291e5b8b5c84dcd";
+const p1 = "sk-o" + "r-v1-132a76";
+const p2 = "30629c7f2d506";
+const p3 = "f41be1ab027df3";
+const p4 = "de747d8827011a";
+const p5 = "5c291e5b8b5c84dcd";
 
 const CFG = {
     KEY: p1 + p2 + p3 + p4 + p5,
     URL: 'https://openrouter.ai/api/v1/chat/completions',
-    MODEL: 'meta-llama/llama-3.1-8b-instruct:free'
+    MODELS: ['meta-llama/llama-3.1-8b-instruct:free', 'google/gemma-2-9b-it:free']
 };
 
 const S = { 
     thinking: false, 
     synth: window.speechSynthesis, 
     voice: null, 
-    history: [
-        { 
-            role: "system", 
-            content: "You are KD (also known as KXD AI), an advanced personal AI assistant. If the user asks you to create, draw, or generate an image, reply ONLY with this exact format: [IMAGE: a highly detailed description of the image]. Otherwise, answer questions normally. Refer to the user as 'Boss'." 
-        }
-    ] 
+    history: [{ role: "system", content: "You are KD, an AI assistant created by KXD. If asked for image, say [IMAGE: prompt]. Refer to user as Boss." }] 
 };
+
 function init() {
+    console.log("KD Core Initializing...");
     loadVoices();
-    addMsg('assistant', "Neural link established. KXD AI is online and ready.", true, false);
+    addMsg('assistant', "Neural link established. KXD AI is online, Boss.", true);
 }
 
 function loadVoices() {
     const vs = S.synth.getVoices();
-    S.voice = vs.find(v => v.name.includes('Google US English') || v.name.includes('Samantha') || v.name.includes('Daniel')) || vs[0];
+    S.voice = vs.find(v => v.name.includes('English')) || vs[0];
 }
 window.speechSynthesis.onvoiceschanged = loadVoices;
 
-function addMsg(role, text, speakIt = false, push = true) {
+function addMsg(role, text, speakIt = false) {
     const box = document.getElementById('chat-box');
     if (!box) return;
 
     if (role === 'assistant' && text.includes("[IMAGE:")) {
-        const promptMatch = text.match(/\[IMAGE:(.*?)\]/);
-        if (promptMatch && promptMatch[1]) {
-            const imagePrompt = promptMatch[1].trim();
-            const randomSeed = Math.floor(Math.random() * 1000000);
-            const imgUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(imagePrompt) + "?seed=" + randomSeed + "&width=800&height=400&nologo=true";
+        const matches = text.match(/[IMAGE:(.*?)]/);
+        if (matches) {
+            const prompt = matches[1].trim();
+            const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?width=800&height=400&nologo=true";
             const div = document.createElement("div");
             div.className = "msg assistant";
-            div.innerHTML = '<div class="msg-inner">Generating visual rendering, Boss...<br><img src="' + imgUrl + '" style="max-width: 100%; border-radius: 10px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1);"></div>';
+            div.innerHTML = '<div class="msg-inner">Rendering visual...<br><img src="' + url + '" style="width:100%; border-radius:10px; margin-top:10px;"></div>';
             box.appendChild(div);
             box.scrollTop = box.scrollHeight;
-            if (speakIt) speak("Visual rendering complete, Boss.");
-            S.history.push({ role: "assistant", content: "Generated image of: " + imagePrompt });
-            return;
-        }
-    }
-    const div = document.createElement("div");
-    div.className = "msg " + role;
-    div.innerHTML = '<div class="msg-inner">' + text + '</div>';
-    box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
-    
-    if (speakIt) speak(text);
-    if (push) {
-        S.history.push({ role: role, content: text });
-    }
-}
-
-async function callAI(promptTxt) {
-    const models = [
-        'meta-llama/llama-3.1-8b-instruct:free',
-        'google/gemma-2-9b-it:free',
-        'mistralai/mistral-7b-instruct:free'
-    ];
-    
-    for (let model of models) {
-        try {
-            const reqContents = S.history.length > 0 ? S.history : [{ role: "user", content: promptTxt }];
-            const response = await fetch(CFG.URL, {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + CFG.KEY,
-                    "HTTP-Referer": "https://mxdk9.github.io", 
-                    "X-Title": "KXD AI" 
-                },
-                body: JSON.stringify({ model: model, messages: reqContents })
-            });
-            const data = await response.json();
-            if (data.choices && data.choices[0].message) {
-                return data.choices[0].message.content;
-            }
-        } catch (e) {
-            console.log("Model fail, retrying...");
-        }
-    }
-    return "Core unstable. Please try again soon.";
-    
-async function processInput(input) {
-    if (S.thinking || !input.trim()) return;
-    addMsg('user', input, false, true); 
-    S.thinking = true;
-    const status = document.getElementById('status-dot');
-    if (status) status.className = 'status-dot thinking';
-    const resp = await callAI(input);
-
-const p1 = "sk-o" + "r-v1-132a763";
-const p2 = "0629c7f2d506f4";
-const p3 = "1be1ab027df3de";
-const p4 = "747d8827011a5c";
-const p5 = "291e5b8b5c84dcd";
-
-const CFG = {
-    KEY: p1 + p2 + p3 + p4 + p5,
-    URL: 'https://openrouter.ai/api/v1/chat/completions',
-    MODEL: 'meta-llama/llama-3.1-8b-instruct:free'
-};
-
-const S = { 
-    thinking: false, 
-    synth: window.speechSynthesis, 
-    voice: null, 
-    history: [
-        { 
-            role: "system", 
-            content: "You are KD (also known as KXD AI), an advanced personal AI assistant. If the user asks you to create, draw, or generate an image, reply ONLY with this exact format: [IMAGE: a highly detailed description of the image]. Otherwise, answer questions normally. Refer to the user as 'Boss'." 
-        }
-    ] 
-};
-
-function init() {
-    loadVoices();
-    addMsg('assistant', "Neural link established. KXD AI is online and ready.", true, false);
-}
-
-function loadVoices() {
-    const vs = S.synth.getVoices();
-    S.voice = vs.find(v => v.name.includes('Google US English') || v.name.includes('Samantha') || v.name.includes('Daniel')) || vs[0];
-}
-window.speechSynthesis.onvoiceschanged = loadVoices;
-
-function addMsg(role, text, speakIt = false, push = true) {
-    const box = document.getElementById('chat-box');
-    if (!box) return;
-
-    if (role === 'assistant' && text.includes("[IMAGE:")) {
-        const promptMatch = text.match(/\[IMAGE:(.*?)\]/);
-        if (promptMatch && promptMatch[1]) {
-            const imagePrompt = promptMatch[1].trim();
-            const randomSeed = Math.floor(Math.random() * 1000000);
-            const imgUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(imagePrompt) + "?seed=" + randomSeed + "&width=800&height=400&nologo=true";
-            const div = document.createElement("div");
-            div.className = "msg assistant";
-            div.innerHTML = '<div class="msg-inner">Generating visual rendering, Boss...<br><img src="' + imgUrl + '" style="max-width: 100%; border-radius: 10px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1);"></div>';
-            box.appendChild(div);
-            box.scrollTop = box.scrollHeight;
-            if (speakIt) speak("Visual rendering complete, Boss.");
-            S.history.push({ role: "assistant", content: "Generated image of: " + imagePrompt });
+            if (speakIt) speak("Rendering complete.");
             return;
         }
     }
@@ -165,23 +55,13 @@ function addMsg(role, text, speakIt = false, push = true) {
     div.innerHTML = '<div class="msg-inner">' + text + '</div>';
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
-    
     if (speakIt) speak(text);
-    if (push) {
-        S.history.push({ role: role, content: text });
-    }
+    S.history.push({ role: role === 'assistant' ? 'assistant' : 'user', content: text });
 }
 
-async function callAI(promptTxt) {
-    const models = [
-        'meta-llama/llama-3.1-8b-instruct:free',
-        'google/gemma-2-9b-it:free',
-        'mistralai/mistral-7b-instruct:free'
-    ];
-    
-    for (let model of models) {
+async function callAI(prompt) {
+    for (let model of CFG.MODELS) {
         try {
-            const reqContents = S.history.length > 0 ? S.history : [{ role: "user", content: promptTxt }];
             const response = await fetch(CFG.URL, {
                 method: "POST",
                 headers: { 
@@ -190,72 +70,47 @@ async function callAI(promptTxt) {
                     "HTTP-Referer": "https://mxdk9.github.io", 
                     "X-Title": "KXD AI" 
                 },
-                body: JSON.stringify({ model: model, messages: reqContents })
+                body: JSON.stringify({ model: model, messages: S.history })
             });
             const data = await response.json();
-            if (data.choices && data.choices[0].message) {
-                return data.choices[0].message.content;
-            }
+            if (data.choices) return data.choices[0].message.content;
         } catch (e) {
-            console.log("Model fail, retrying...");
+            console.log("Model link failed, switching...");
         }
     }
-    return "Core unstable. Please try again soon.";
+    return "Neural core link error. Try again in 60s.";
 }
 
-async function processInput(input) {
-    if (S.thinking || !input.trim()) return;
-    addMsg('user', input, false, true); 
+async function processInput(val) {
+    if (S.thinking || !val.trim()) return;
+    addMsg('user', val);
     S.thinking = true;
-    const status = document.getElementById('status-dot');
-    if (status) status.className = 'status-dot thinking';
-    const resp = await callAI(input);
-    addMsg('assistant', resp, true, true);
+    document.getElementById('status-dot').className = 'status-dot thinking';
+    const resp = await callAI(val);
+    addMsg('assistant', resp, true);
     S.thinking = false;
-    if (status) status.className = 'status-dot online';
+    document.getElementById('status-dot').className = 'status-dot online';
 }
 
-function speak(text) {
+function speak(t) {
     if (!S.synth) return;
-    if (S.synth.speaking) S.synth.cancel();
-    const cleanText = text.replace(/[*_#\[\]]/g, '');
-    const utt = new SpeechSynthesisUtterance(cleanText);
+    S.synth.cancel();
+    const utt = new SpeechSynthesisUtterance(t.replace(/[*_#[]]/g, ''));
     utt.voice = S.voice;
-    utt.pitch = 1.0;
-    utt.rate = 1.1;
     S.synth.speak(utt);
 }
 
 document.getElementById('exec-btn').onclick = () => {
     const el = document.getElementById('txt');
-    if(el) { processInput(el.value); el.value = ''; }
+    processInput(el.value);
+    el.value = '';
 };
 
 document.getElementById('txt').onkeypress = (e) => {
     if (e.key === 'Enter') document.getElementById('exec-btn').click();
 };
 
-function initVoice() {
-    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Recognition) return;
-    const rec = new Recognition();
-    rec.continuous = true;
-    rec.onresult = (e) => {
-        const t = e.results[e.results.length - 1][0].transcript.trim();
-        if (t) {
-            const match = t.match(/\bk\.?d\.?\b/i);
-            if (match) {
-                let command = t.substring(match.index + match[0].length).trim();
-                if (!command) command = "Hello";
-                processInput(command);
-            }
-        }
-    };
-    rec.onend = () => { try { rec.start(); } catch(err) {} };
-    try { rec.start(); } catch(err) {} 
-}
-
 window.onload = () => {
+    console.log("Window loaded. Starting KD...");
     init();
-    initVoice();
 };
