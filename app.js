@@ -2,7 +2,8 @@
 
 const CFG = {
     GEMINI_KEY: 'AIzaSyBdyTy3VqLzMnJ-Kp1LuDpz5x2LnTzRf4M',
-    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent'
+    // UPDATED: Using Google's active gemini-2.5-flash model
+    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
 };
 
 const S = { thinking: false, synth: window.speechSynthesis, voice: null, history: [] };
@@ -25,7 +26,6 @@ function updateDate() {
 
 function loadVoices() {
     const vs = S.synth.getVoices();
-    // Defaulting to an English voice
     S.voice = vs.find(v => v.name.includes('US English') || v.name.includes('Daniel')) || vs[0];
 }
 window.speechSynthesis.onvoiceschanged = loadVoices;
@@ -40,8 +40,6 @@ function addMsg(role, text, speakIt = false, push = true) {
     box.scrollTop = box.scrollHeight;
     
     if (speakIt) speak(text);
-    
-    // Proper conversational history formatting for Gemini API
     if (push) {
         S.history.push({ role: role === "jarvis" ? "model" : "user", parts: [{ text: text }] });
     }
@@ -61,7 +59,7 @@ async function callGemini(prompt) {
         if (data.candidates && data.candidates[0].content) {
             return data.candidates[0].content.parts[0].text;
         } else if (data.error) {
-            return "Boss, my cognitive API key was rejected. Check credentials.";
+            return "Boss, my cognitive API key was rejected: " + data.error.message;
         }
         return "Bridge Verification Error, Boss.";
     } catch (e) {
@@ -91,7 +89,6 @@ async function jarvisProcess(input) {
 function speak(text) {
     if (!S.synth) return;
     if (S.synth.speaking) S.synth.cancel();
-    // Clean out markdown asterisks so JARVIS doesn't pronounce them out loud
     const cleanText = text.replace(/[*_#]/g, '');
     const utt = new SpeechSynthesisUtterance(cleanText);
     utt.voice = S.voice;
@@ -119,12 +116,10 @@ function initVoice() {
     rec.onresult = (e) => {
         const t = e.results[e.results.length - 1][0].transcript.trim();
         if (t) {
-            // WAKE WORD LOGIC: Checks if "KD" was spoken. 
+            // Wake Word set back to KD
             const match = t.match(/\bk\.?d\.?\b/i);
             if (match) {
-                // Extracts exactly what you said AFTER the wake word
                 let command = t.substring(match.index + match[0].length).trim();
-                // If you only said "KD", it will pass a "Hello" to the AI to trigger a proper greeting response
                 if (!command) { command = "Hello"; } 
                 jarvisProcess(command);
             }
@@ -139,3 +134,4 @@ window.onload = () => {
     init();
     initVoice();
 };
+
