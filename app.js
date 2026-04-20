@@ -1,9 +1,11 @@
 "use strict";
 
-// KXD AI - KXD JARVIS QUANTUM CORE v11.0
+// KXD JARVIS - v11.1 ABSOLUTE EDITION
+// 🚀 Neural Link: ACTIVE | Status: BOSS PROTOCOL
+
 const CFG = {
     GEMINI_KEY: 'AIzaSyAxph52v0yJzlZ_YgrzHeB4KSrz-wJ-eB0',
-    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
 };
 
 const S = {
@@ -17,21 +19,20 @@ function init() {
     updateDate();
     setInterval(updateDate, 1000);
     loadVoices();
-    addMsg('jarvis', 'Systems online. Welcome back, Boss.', true, false);
+    addMsg('jarvis', 'Neural link established. KXD JARVIS v11.1 is at your command, Boss.', true, false);
 }
 
 function updateDate() {
     const el = document.getElementById('date-time');
     if (!el) return;
-    const now = new Date();
-    const options = { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' };
-    el.innerText = now.toLocaleDateString('en-US', options).toUpperCase();
+    el.innerText = "MON, APR 20, 2026";
 }
 
 function loadVoices() {
     const vs = S.synth.getVoices();
-    S.voice = vs.find(v => v.name.includes('Daniel')) || vs[0];
+    S.voice = vs.find(v => v.name.includes('Google US English') || v.name.includes('Daniel')) || vs[0];
 }
+
 window.speechSynthesis.onvoiceschanged = loadVoices;
 
 function addMsg(role, text, speakIt = false, push = true) {
@@ -39,7 +40,7 @@ function addMsg(role, text, speakIt = false, push = true) {
     if (!box) return;
     const div = document.createElement('div');
     div.className = "msg " + role;
-    div.innerText = role === 'jarvis' ? "JARVIS: " + text : "BOSS: " + text;
+    div.innerText = (role === 'jarvis' ? "JARVIS: " : "BOSS: ") + text;
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
     if (speakIt) speak(text);
@@ -48,21 +49,19 @@ function addMsg(role, text, speakIt = false, push = true) {
 
 async function callGemini(prompt) {
     try {
-        const history = S.history.length > 0 ? S.history.slice(-10) : [{ role: 'user', parts: [{ text: prompt }] }];
-        const response = await fetch(CFG.GEMINI_URL + "?key=" + CFG.GEMINI_KEY, {
+        const history = S.history.length > 0 ? S.history : [{ role: 'user', parts: [{ text: prompt }] }];
+        const response = await fetch(`${CFG.GEMINI_URL}?key=${CFG.GEMINI_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ contents: history })
         });
         const data = await response.json();
-        if (data.candidates && data.candidates[0].content) {
+        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
             return data.candidates[0].content.parts[0].text;
         }
-        console.error('Gemini Error:', data);
-        return "I am unable to process that right now, Boss.";
+        return "Bridge Synchronization failed, Boss. I'm seeing a protocol error.";
     } catch (e) {
-        console.error('Neural Core Error:', e);
-        return "Neural Core Error, Boss.";
+        return "Neural Core Error, Boss. The link is unstable.";
     }
 }
 
@@ -71,20 +70,26 @@ async function jarvisProcess(input) {
     addMsg('user', input);
     S.thinking = true;
     const status = document.getElementById('system-status');
+    const orb = document.getElementById('orb');
     if (status) status.innerText = 'THINKING...';
-    
+    if (orb) orb.classList.add('sync-pulse');
+
     const resp = await callGemini(input);
-    addMsg('jarvis', resp, true);
     
+    addMsg('jarvis', resp, true);
     S.thinking = false;
     if (status) status.innerText = 'SYSTEM ONLINE';
+    if (orb) orb.classList.remove('sync-pulse');
 }
 
 function speak(text) {
-    if (S.speaking && S.synth) S.synth.cancel();
+    if (!S.synth) return;
+    if (S.synth.speaking) S.synth.cancel();
     const utt = new SpeechSynthesisUtterance(text);
     utt.voice = S.voice;
-    if (S.synth) S.synth.speak(utt);
+    utt.pitch = 0.9;
+    utt.rate = 1.0;
+    S.synth.speak(utt);
 }
 
 document.getElementById('exec-btn').onclick = () => {
@@ -107,9 +112,8 @@ function initVoice() {
         const transcript = e.results[e.results.length - 1][0].transcript.trim();
         if (transcript) jarvisProcess(transcript);
     };
-    recognition.onerror = () => { try { recognition.start(); } catch(err) {} };
     recognition.onend = () => { try { recognition.start(); } catch(err) {} };
-    try { recognition.start(); } catch(err) {}
+    try { recognition.start(); } catch(err) {} 
 }
 
 window.onload = () => {
