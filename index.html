@@ -1,2 +1,56 @@
-<!DOCTYPE html> <html lang='en'> <head> <meta charset='UTF-8' /> <meta name='viewport' content='width=device-width, initial-scale=1.0'/> <title>KXD JARVIS - KXD JARVIS v11.0 Quantum Edition</title> <link rel='stylesheet' href='style.css'> <link rel='icon' type='image/png' href='https://img.icons8.com/parakeet-line/96/00d4ff/iron-man.png'> </head> <body>  <div id='boot-label'>INITIALIZING CORE...</div> <div class='boot-meta' id='boot-meta'>SYSCK_10.1: CORE_B_0x11</div> </div> </div> <canvas id='bg-canvas'></canvas> <main id='app'> <header id='hdr'> <div class='hdr-brand'> <div class='hdr-icon'> <svg viewBox='0 0 24 24'><circle cx='12' cy='12' r='10'/><path d='M12 8l4 4-4 4M8 12h8'/></svg> </div> <div> <div class='hdr-title'>KXD JARVIS</div> <div class='hdr-sub'>KXD JARVIS V10.1</div> </div> </div> <div class='hdr-center'> <div class='status-badge'> <div id='status-dot' class='sdot online'></div> <div id='status-txt'>SYSTEM READY</div> </div> </div> <div class='hdr-clock'> <div id='clock'>00:00:00</div> <div id='date'>LOADING...</div> </div> <div class='hdr-btns'> <button class='h-btn' id='settings-btn' title='Settings'> <svg viewBox='0 0 24 24'><path d='M12 15a3 3 0 100-6 3 3 0 000 6z'/><path d='M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z'/></svg> </b
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KXD JARVIS v11.0 - Quantum Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body.quantum-hud { background: #000; color: #0ff; font-family: 'Rajdhani', sans-serif; overflow: hidden; margin: 0; }
+        .hud-container { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; border: 1px solid rgba(0, 255, 255, 0.2); }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #0ff; padding-bottom: 10px; }
+        .logo { font-family: 'Orbitron', sans-serif; font-size: 24px; text-shadow: 0 0 10px #0ff; }
+        .v-core { font-size: 12px; opacity: 0.7; }
+        .chat-interface { flex: 1; display: flex; flex-direction: column; margin-top: 20px; overflow-y: auto; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 10px; border-left: 1px solid rgba(0, 255, 255, 0.1); }
+        .input-area { display: flex; margin-top: 20px; gap: 10px; }
+        input#txt { flex: 1; background: rgba(0, 50, 50, 0.5); border: 1px solid #0ff; color: #fff; padding: 10px; font-family: 'Rajdhani'; outline: none; }
+        button { background: #0ff; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; }
+        #mic-btn { background: #555; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
+        #mic-btn.active { background: #f00; box-shadow: 0 0 15px #f00; }
+        .neural-visualizer { position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; }
+        .orb-glow { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #0ff; box-shadow: inset 0 0 20px #0ff, 0 0 20px #0ff; opacity: 0.5; }
+        .sync-pulse { animation: pulse 0.5s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.3; transform: scale(0.9); } to { opacity: 0.8; transform: scale(1.1); } }
+        .msg { margin: 8px 0; padding: 10px; border-radius: 4px; line-height: 1.4; }
+        .msg.user { border-right: 3px solid #0ff; background: rgba(0, 255, 255, 0.05); text-align: right; }
+        .msg.jarvis { border-left: 3px solid #0c0; background: rgba(0, 255, 0, 0.05); }
+    </style>
+</head>
+<body class="quantum-hud">
+    <div class="hud-container">
+        <header>
+            <div class="logo">KXD JARVIS <span class="v-core">v11.0</span></div>
+            <div class="status-bar">
+                <span id="date-time">LOADING...</span> | 
+                <span id="system-status" class="online">SYSTEM ONLINE</span>
+            </div>
+        </header>
 
+        <main class="chat-interface">
+            <div id="chat-box" class="chat-history"></div>
+            <div class="input-area">
+                <input type="text" id="txt" placeholder="Listening, Boss..." autocomplete="off">
+                <button id="exec-btn">EXEC</button>
+                <button id="mic-btn" class="mic-icon">🎤</button>
+            </div>
+        </main>
+
+        <div class="neural-visualizer">
+            <div id="orb" class="orb-glow"></div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
