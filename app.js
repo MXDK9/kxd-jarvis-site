@@ -61,9 +61,9 @@ function addMsg(role, text, speakIt = false) {
 
 async function callAI(promptTxt) {
     const models = [
-        'meta-llama/llama-3.1-8b-instruct:free',
-        'google/gemma-2-9b-it:free',
-        'mistralai/mistral-7b-instruct:free'
+        'nvidia/nemotron-3-super-120b-a12b:free',
+        'arcee-ai/trinity-large-preview:free',
+        'openai/gpt-oss-120b:free'
     ];
     
     // Create a copy of history and fix 'system' role for models that don't support it
@@ -74,6 +74,8 @@ async function callAI(promptTxt) {
 
     for (let model of models) {
         try {
+            console.log("DEBUG: Request URL:", 'https://openrouter.ai/api/v1/chat/completions');
+            console.log("DEBUG: Request Headers:", { "Content-Type": "application/json", "Authorization": "Bearer " + CFG.KEY });
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                 method: "POST",
                 headers: { 
