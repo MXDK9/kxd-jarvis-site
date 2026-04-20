@@ -1,9 +1,10 @@
 "use strict";
 
 const CFG = {
-    GEMINI_KEY: 'AIzaSyAAl03QyiDXmt8226iTXq5tIXQ__KnnF_Y',
-    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent'
+    GEMINI_KEY: myKey,
+    GEMINI_URL: 'http://127.0.0.1:8000/chat' // <-- Pointing directly to our new custom API
 };
+
 
 const S = { thinking: false, synth: window.speechSynthesis, voice: null, history: [] };
 
