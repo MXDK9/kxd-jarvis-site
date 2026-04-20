@@ -11,19 +11,23 @@ function init() {
     updateDate();
     setInterval(updateDate, 1000);
     loadVoices();
-    addMsg('jarvis', 'Neural link established. KXD JARVIS v11.1 is online, Boss.', true, false);
+    addMsg('jarvis', 'Neural link established. KXD JARVIS is online, Boss.', true, false);
 }
 
 function updateDate() {
     const el = document.getElementById('date-time');
-    if (el) el.innerText = "MON, APR 20, 2026";
+    if (el) {
+        const now = new Date();
+        const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+        el.innerText = now.toLocaleDateString('en-US', options).toUpperCase();
+    }
 }
 
 function loadVoices() {
     const vs = S.synth.getVoices();
+    // Defaulting to an English voice
     S.voice = vs.find(v => v.name.includes('US English') || v.name.includes('Daniel')) || vs[0];
 }
-
 window.speechSynthesis.onvoiceschanged = loadVoices;
 
 function addMsg(role, text, speakIt = false, push = true) {
@@ -34,39 +38,52 @@ function addMsg(role, text, speakIt = false, push = true) {
     div.innerText = (role === "jarvis" ? "JARVIS: " : "BOSS: ") + text;
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
+    
     if (speakIt) speak(text);
-    if (push) S.history.push({ role: role === "jarvis" ? "model" : "user", parts: [{ text: text }] });
+    
+    // Proper conversational history formatting for Gemini API
+    if (push) {
+        S.history.push({ role: role === "jarvis" ? "model" : "user", parts: [{ text: text }] });
+    }
 }
 
 async function callGemini(prompt) {
     try {
-        const history = S.history.length > 0 ? S.history : [{ role: "user", parts: [{ text: prompt }] }];
+        const reqContents = S.history.length > 0 ? S.history : [{ role: "user", parts: [{ text: prompt }] }];
+        
         const response = await fetch(`${CFG.GEMINI_URL}?key=${CFG.GEMINI_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: history })
+            body: JSON.stringify({ contents: reqContents })
         });
+        
         const data = await response.json();
         if (data.candidates && data.candidates[0].content) {
             return data.candidates[0].content.parts[0].text;
+        } else if (data.error) {
+            return "Boss, my cognitive API key was rejected. Check credentials.";
         }
         return "Bridge Verification Error, Boss.";
     } catch (e) {
-        return "Neural Core Link failure, Boss.";
+        return "Neural Core Link failure due to network error, Boss.";
     }
 }
 
 async function jarvisProcess(input) {
     if (S.thinking || !input.trim()) return;
-    addMsg('user', input);
+    addMsg('user', input, false, true); 
     S.thinking = true;
+    
     const status = document.getElementById('system-status');
     const orb = document.getElementById('orb');
     if (status) status.innerText = 'THINKING...';
     if (orb) orb.classList.add('sync-pulse');
+    
     const resp = await callGemini(input);
-    addMsg('jarvis', resp, true);
+    
+    addMsg('jarvis', resp, true, true);
     S.thinking = false;
+    
     if (status) status.innerText = 'SYSTEM ONLINE';
     if (orb) orb.classList.remove('sync-pulse');
 }
@@ -74,7 +91,9 @@ async function jarvisProcess(input) {
 function speak(text) {
     if (!S.synth) return;
     if (S.synth.speaking) S.synth.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
+    // Clean out markdown asterisks so JARVIS doesn't pronounce them out loud
+    const cleanText = text.replace(/[*_#]/g, '');
+    const utt = new SpeechSynthesisUtterance(cleanText);
     utt.voice = S.voice;
     utt.pitch = 0.9;
     utt.rate = 1.0;
@@ -95,10 +114,23 @@ function initVoice() {
     if (!Recognition) return;
     const rec = new Recognition();
     rec.continuous = true;
+    rec.interimResults = false;
+    
     rec.onresult = (e) => {
         const t = e.results[e.results.length - 1][0].transcript.trim();
-        if (t) jarvisProcess(t);
+        if (t) {
+            // WAKE WORD LOGIC: Checks if "KD" was spoken. 
+            const match = t.match(/\bk\.?d\.?\b/i);
+            if (match) {
+                // Extracts exactly what you said AFTER the wake word
+                let command = t.substring(match.index + match[0].length).trim();
+                // If you only said "KD", it will pass a "Hello" to the AI to trigger a proper greeting response
+                if (!command) { command = "Hello"; } 
+                jarvisProcess(command);
+            }
+        }
     };
+    
     rec.onend = () => { try { rec.start(); } catch(err) {} };
     try { rec.start(); } catch(err) {} 
 }
