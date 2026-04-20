@@ -1,9 +1,10 @@
 "use strict";
 
 const CFG = {
-    GEMINI_KEY: 'AIzaSyBdyTy3VqLzMnJ-Kp1LuDpz5x2LnTzRf4M',
-    // Switched to hyper-fast, low-demand 2.0 model to guarantee NO overload errors.
-    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+    // Unlocked and bound to your new active key
+    GEMINI_KEY: 'AIzaSyAAl03QyiDXmt8226iTXq5tIXQ__KnnF_Y',
+    // Bypassing overload by using the flash-latest fallback endpoint
+    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent'
 };
 
 const S = { thinking: false, synth: window.speechSynthesis, voice: null, history: [] };
