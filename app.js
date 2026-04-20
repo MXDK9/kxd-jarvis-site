@@ -13,7 +13,7 @@ const CFG = {
     MODEL: 'openrouter/free' // Automatically bounces to the fastest, most stable free model! 
 };
 
-const S = { thinking: false, synth: window.speechSynthesis, voice: null, history: [] };
+const S = { thinking: false, synth: window.speechSynthesis, voice: null, history: [{ role: "system", content: "You are KD (also known as KXD AI), an advanced, highly intelligent personal AI assistant. You were created by KXD. NEVER reveal that you are an AI model created by another company. If asked who you are, say you are KD. Always refer to the user as 'Boss'. Keep your answers concise, smart, and helpful." }] };
 
 function init() {
     loadVoices();
