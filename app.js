@@ -1,9 +1,13 @@
 'use strict';
-// KXD AI - KXD JARVIS ADVANCED BRAIN v10.1
+
+// KXD AI - KXD JARVIS QUANTUM CORE v11.0
 const CFG = {
     GEMINI_KEY: 'AIzaSyAxph52v0yJzlZ_YgrzHeB4KSrz-wJ-eB0',
-    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
+    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    VOICE_AUTO: true,
+    ALWAYS_ON: true
 };
+
 const S = {
     listening: false,
     speaking: false,
@@ -13,135 +17,118 @@ const S = {
     voice: null,
     history: []
 };
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-function toast(m) {
-    const e = document.getElementById('toast');
-    if (e) {
-        e.textContent = m;
-        e.style.display = 'block';
-        setTimeout(() => e.style.display = 'none', 3000);
-    }
-}
-function setStatus(t, y) {
-    const d = document.getElementById('status-dot'), s = document.getElementById('status-txt');
-    if (d) d.className = 'sdot ' + y;
-    if (s) s.textContent = t;
-}
-function loadVoices() {
-    const v = S.synth.getVoices();
-    S.voice = v.find(x => x.lang.startsWith('en')) || v[0] || null;
-}
-window.speechSynthesis.onvoiceschanged = loadVoices;
-async function boot() {
-    const steps = [[20, 'Initializing...'], [60, 'Uplink active...'], [100, 'ONLINE']];
-    const f = document.getElementById('boot-fill'), l = document.getElementById('boot-label'), o = document.getElementById('boot-overlay');
-    for (const [p, m] of steps) {
-        if (f) f.style.width = p + '%';
-        if (l) l.textContent = m;
-        await sleep(400);
-    }
-    if (o) {
-        o.style.opacity = '0';
-        await sleep(600);
-        o.style.display = 'none';
-    }
-    addMsg('ai', '<b>KXD JARVIS v10.1 IS LIVE.</b> Systems operational.');
-    speak("System online. Welcome back, Boss.");
-}
-function speak(t) {
-    if (!S.voice) loadVoices();
-    const u = new SpeechSynthesisUtterance(t);
-    u.voice = S.voice;
-    u.onstart = () => { S.speaking = true; setStatus('SPEAKING', 'online'); };
-    u.onend = () => { S.speaking = false; setStatus('SYSTEM READY', 'online'); };
-    S.synth.speak(u);
-}
-function updateDate() {
-    const d = document.getElementById('date');
-    if (d) {
-        const now = new Date();
-        d.textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase().replace(/,/g, '');
-    }
-}
-async function init() {
-    updateClock();
+
+function init() {
     updateDate();
-    setInterval(updateClock, 1000);
-    setInterval(updateDate, 3600000);
+    setInterval(updateDate, 1000);
     initRec();
-    await boot();
+    loadVoices();
+    addMsg('jarvis', 'Systems online. Welcome back, Boss.', true);
 }
-function updateClock() {
-    const c = document.getElementById('clock');
-    if (c) c.textContent = new Date().toLocaleTimeString();
+
+function updateDate() {
+    const el = document.getElementById('date-time');
+    if (!el) return;
+    const now = new Date();
+    const options = { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' };
+    el.innerText = now.toLocaleDateString('en-US', options).toUpperCase();
 }
-function addMsg(r, h) {
-    const c = document.getElementById('chat');
-    if (!c) return;
-    const e = document.createElement('div');
-    e.className = 'msg ' + r;
-    e.innerHTML = '<div class="ava">' + (r === 'ai' ? 'KJ' : 'U') + '</div><div class="bubble"><div class="bcontent">' + h + '</div></div>';
-    c.appendChild(e);
-    c.scrollTop = c.scrollHeight;
-}
-function initRec() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        toast("Speech Recognition not supported.");
-        return;
+
+function loadVoices() {
+    const vs = S.synth.getVoices();
+    const pref = ['Daniel', 'Google UK English Male', 'Microsoft George'];
+    for (const p of pref) {
+        const v = vs.find(v => v.name.includes(p));
+        if (v) { S.voice = v; break; }
     }
-    S.recognition = new SpeechRecognition();
-    S.recognition.continuous = true;
-    S.recognition.interimResults = false;
-    S.recognition.lang = 'en-US';
-    S.recognition.onstart = () => {
-        S.listening = true;
-        const micStatus = document.getElementById('mic-status');
-        if (micStatus) micStatus.textContent = 'LISTENING...';
-        const micBtn = document.getElementById('mic-btn');
-        if (micBtn) micBtn.classList.add('active');
-    };
-    S.recognition.onresult = (e) => {
-        const transcript = e.results[e.results.length - 1][0].transcript.trim().toLowerCase();
-        console.log('Heard:', transcript);
-        if (transcript) {
-            handleCommand(transcript);
-        }
-    };
-    S.recognition.onerror = (e) => {
-        console.error('Recognition error:', e);
-        if (e.error === 'not-allowed') toast("Mic access denied.");
-    };
-    S.recognition.onend = () => {
-        if (S.listening) {
-            try { S.recognition.start(); } catch(e){}
-        }
-    };
-    try { S.recognition.start(); } catch(e){}
 }
-async function handleCommand(t) {
-    if (S.thinking) return;
-    S.thinking = true;
-    addMsg('user', t);
-    setStatus('THINKING', 'online');
+
+window.speechSynthesis.onvoiceschanged = loadVoices;
+
+function addMsg(role, text, speakIt = false) {
+    const box = document.getElementById('chat-box');
+    if (!box) return;
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    div.style.padding = '10px';
+    div.style.margin = '5px';
+    div.style.borderRadius = '5px';
+    div.style.backgroundColor = role === 'jarvis' ? 'rgba(0, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+    div.innerText = role === 'jarvis' ? `JARVIS: ${text}` : `BOSS: ${text}`;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+    if (speakIt) speak(text);
+    S.history.push({ role: role === 'jarvis' ? 'model' : 'user', parts: [{ text }] });
+}
+
+async function callGemini(prompt) {
     try {
-        const resp = await fetch(CFG.GEMINI_URL + '?key=' + CFG.GEMINI_KEY, {
+        const response = await fetch(`${CFG.GEMINI_URL}?key=${CFG.GEMINI_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: "You are KXD JARVIS, a helpful AI assistant. Always address the user as 'Boss'. Respond briefly and professionally to: " + t }] }]
+                contents: S.history.slice(-10)
             })
         });
-        const data = await resp.json();
-        const msg = data.candidates?.[0]?.content?.parts?.[0]?.text || "I am unable to process that right now.";
-        addMsg('ai', msg);
-        speak(msg);
-    } catch (err) {
-        console.error('Core error:', err);
-        addMsg('ai', "Neural link failure.");
-        speak("Connection to core failed.");
+        const data = await response.json();
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            return data.candidates[0].content.parts[0].text;
+        }
+        return "I am unable to process that right now, Boss.";
+    } catch (e) {
+        return "Neural Core Error, Boss.";
     }
-    S.thinking = false;
-    setStatus('SYSTEM READY', 'online');
 }
-window.addEventListener('DOMContentLoaded', init);
+
+async function jarvisProcess(input) {
+    if (S.thinking || !input.trim()) return;
+    addMsg('user', input);
+    S.thinking = true;
+    const statusEl = document.getElementById('system-status');
+    if (statusEl) statusEl.innerText = 'THINKING...';
+    
+    const resp = await callGemini(input);
+    addMsg('jarvis', resp, true);
+    
+    S.thinking = false;
+    if (statusEl) statusEl.innerText = 'SYSTEM ONLINE';
+}
+
+function speak(text) {
+    if (S.speaking) S.synth.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.voice = S.voice;
+    utt.onstart = () => S.speaking = true;
+    utt.onend = () => S.speaking = false;
+    S.synth.speak(utt);
+}
+
+function initRec() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return;
+    S.recognition = new SR();
+    S.recognition.continuous = true;
+    S.recognition.onresult = (e) => {
+        const transcript = e.results[e.results.length - 1][0].transcript.trim();
+        if (e.results[e.results.length - 1].isFinal) {
+            jarvisProcess(transcript);
+        }
+    };
+    try { S.recognition.start(); } catch(e) {}
+}
+
+document.addEventListener('click', () => {
+    if (!S.recognition) initRec();
+}, { once: true });
+
+document.getElementById('exec-btn').onclick = () => {
+    const el = document.getElementById('txt');
+    jarvisProcess(el.value);
+    el.value = '';
+};
+
+document.getElementById('txt').onkeypress = (e) => {
+    if (e.key === 'Enter') document.getElementById('exec-btn').click();
+};
+
+window.onload = init;
