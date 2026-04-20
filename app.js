@@ -10,7 +10,7 @@ const p5 = "291e5b8b5c84dcd";
 const CFG = {
     KEY: p1 + p2 + p3 + p4 + p5,
     URL: 'https://openrouter.ai/api/v1/chat/completions',
-    MODEL: 'meta-llama/llama-3-8b-instruct:free' // Pulls from Meta's massive free Llama-3 brain
+       MODEL: 'meta-llama/llama-3.3-70b-instruct:free' // Pulls from Meta's massive free Llama-3 brain
 };
 
 const S = { thinking: false, synth: window.speechSynthesis, voice: null, history: [] };
