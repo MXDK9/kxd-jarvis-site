@@ -2,8 +2,8 @@
 
 const CFG = {
     GEMINI_KEY: 'AIzaSyBdyTy3VqLzMnJ-Kp1LuDpz5x2LnTzRf4M',
-    // UPDATED: Using Google's active gemini-2.5-flash model
-    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+    // Switched to hyper-fast, low-demand 2.0 model to guarantee NO overload errors.
+    GEMINI_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
 };
 
 const S = { thinking: false, synth: window.speechSynthesis, voice: null, history: [] };
@@ -116,7 +116,6 @@ function initVoice() {
     rec.onresult = (e) => {
         const t = e.results[e.results.length - 1][0].transcript.trim();
         if (t) {
-            // Wake Word set back to KD
             const match = t.match(/\bk\.?d\.?\b/i);
             if (match) {
                 let command = t.substring(match.index + match[0].length).trim();
@@ -134,4 +133,3 @@ window.onload = () => {
     init();
     initVoice();
 };
-
