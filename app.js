@@ -34,14 +34,34 @@ function addMsg(role, text, speakIt = false, push = true) {
     if (push) { S.history.push({ role: role, content: text }); }
 }
 async function callAI(promptTxt) {
-    try {
-        const reqContents = S.history.length > 0 ? S.history : [{ role: "user", content: promptTxt }];
-        const response = await fetch(CFG.URL, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CFG.KEY, "HTTP-Referer": "https://mxdk9.github.io", "X-Title": "KXD AI" }, body: JSON.stringify({ model: CFG.MODEL, messages: reqContents }) });
-        const data = await response.json();
-        if (data.choices && data.choices[0].message) return data.choices[0].message.content;
-        else if (data.error) return "Connection interrupted: " + data.error.message;
-        return "Core systems offline.";
-    } catch (e) { return "Network link failure."; }
+    const models = [
+        'meta-llama/llama-3.1-8b-instruct:free',
+        'google/gemma-2-9b-it:free',
+        'mistralai/mistral-7b-instruct:free'
+    ];
+    
+    for (let model of models) {
+        try {
+            const reqContents = S.history.length > 0 ? S.history : [{ role: "user", content: promptTxt }];
+            const response = await fetch(CFG.URL, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${CFG.KEY}`,
+                    "HTTP-Referer": "https://mxdk9.github.io", 
+                    "X-Title": "KXD AI" 
+                },
+                body: JSON.stringify({ model: model, messages: reqContents })
+            });
+            const data = await response.json();
+            if (data.choices && data.choices[0].message) {
+                return data.choices[0].message.content;
+            }
+        } catch (e) {
+            console.log(`Model ${model} failed, trying next...`);
+        }
+    }
+    return "Neural link unstable. All free providers are currently congested. Please try again in 60 seconds.";
 }
 async function processInput(input) {
     if (S.thinking || !input.trim()) return;
@@ -61,6 +81,3 @@ function initVoice() {
     const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition; if (!Recognition) return;
     const rec = new Recognition(); rec.continuous = true; rec.interimResults = false;
     rec.onresult = (e) => { const t = e.results[e.results.length - 1][0].transcript.trim(); if (t) { const match = t.match(/\bk\.?d\.?\b/i); if (match) { let command = t.substring(match.index + match[0].length).trim(); if (!command) { command = "Hello"; } processInput(command); } } };
-    rec.onend = () => { try { rec.start(); } catch(err) {} }; try { rec.start(); } catch(err) {} 
-}
-window.onload = () => { init(); initVoice(); };
