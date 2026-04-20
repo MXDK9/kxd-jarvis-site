@@ -1,7 +1,7 @@
 "use strict";
 
 const CFG = {
-    GEMINI_KEY: 'AIzaSyA6Ho7XD0W1dhq9MX6xYaHN8RA4TKpvrLo',
+    GEMINI_KEY: 'AIzaSyBdyTy3VqLzMnJ-Kp1LuDpz5x2LnTzRf4M',
     GEMINI_URL: 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent'
 };
 
