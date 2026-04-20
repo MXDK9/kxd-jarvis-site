@@ -59,27 +59,40 @@ function addMsg(role, text, speakIt = false) {
     S.history.push({ role: role === 'assistant' ? 'assistant' : 'user', content: text });
 }
 
-async function callAI(prompt) {
-    for (let model of CFG.MODELS) {
+async function callAI(promptTxt) {
+    const models = [
+        'meta-llama/llama-3.1-8b-instruct:free',
+        'google/gemma-2-9b-it:free',
+        'mistralai/mistral-7b-instruct:free'
+    ];
+    
+    // Create a copy of history and fix 'system' role for models that don't support it
+    const cleanHistory = S.history.map(m => ({
+        role: m.role === 'system' ? 'user' : m.role,
+        content: m.content
+    }));
+
+    for (let model of models) {
         try {
-            const response = await fetch(CFG.URL, {
+            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + CFG.KEY,
-                    "HTTP-Referer": "https://mxdk9.github.io", 
-                    "X-Title": "KXD AI" 
+                    "Authorization": "Bearer " + CFG.KEY
                 },
-                body: JSON.stringify({ model: model, messages: S.history })
+                body: JSON.stringify({ model: model, messages: cleanHistory })
             });
             const data = await response.json();
-            if (data.choices) return data.choices[0].message.content;
+            if (data.choices && data.choices[0].message) {
+                return data.choices[0].message.content;
+            }
         } catch (e) {
-            console.log("Model link failed, switching...");
+            console.log("Link failed for " + model);
         }
     }
-    return "Neural core link error. Try again in 60s.";
+    return "Neural link congested. High demand detected. Please wait 30 seconds and retry, Boss.";
 }
+
 
 async function processInput(val) {
     if (S.thinking || !val.trim()) return;
