@@ -11,7 +11,7 @@ const S = { thinking: false, history: [{ role: "system", content: "You are KD, a
 function addMsg(role, text) {
     const box = document.getElementById('chat');
     if (text.includes("[IMAGE:")) {
-        const p = text.match(/[IMAGE:(.*?)]/)[1].trim();
+        const p = text.match(/\[IMAGE:(.*?)\]/)[1].trim();
         const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=800&height=400&nologo=true`;
         text = `Rendering image, Boss...<br><img src="${url}" style="width:100%; border-radius:15px; margin-top:10px;">`;
     }
