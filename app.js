@@ -1,44 +1,31 @@
 "use strict";
-const gk = "AIzaSyAAl03QyiDXmt8226iT" + "Xq5tIXQ__KnnF_Y";
-const ok = "sk-or-v1-132a7630629c7f2d50" + "6f41be1ab027df3de747d8827011a5c291e5b8b5c84dcd";
-
-const S = { thinking: false, history: [{ role: "user", parts: [{ text: "You are KD, an AI created by KXD. If asked for image, say [IMAGE: prompt]. Refer to user as Boss." }] }] };
+const S = { thinking: false, history: [] };
 
 function addMsg(role, text) {
     const box = document.getElementById('chat');
     if (text.includes("[IMAGE:")) {
-        const p = text.match(/\[IMAGE:(.*?)\]/)[1].trim();
-        const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(p) + "?width=800&height=400&nologo=true";
-        text = "Rendering image, Boss...<br><img src=\"" + url + "\" style=\"width:100%; border-radius:15px; margin-top:10px;\">";
+        const match = text.match(/\[IMAGE:(.*?)\]/);
+        if (match) {
+            const p = match[1].trim();
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=800&height=400&nologo=true`;
+            text = `Rendering image, Boss...<br><img src="${url}" style="width:100%; border-radius:15px; margin-top:10px;">`;
+        }
     }
     const div = document.createElement("div");
     div.className = "msg " + (role === 'user' ? 'user' : 'ai');
     div.innerHTML = text;
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
-    S.history.push({ role: role==='user'?'user':'model', parts: [{ text: text }] });
 }
 
 async function callAI(p) {
     try {
-        const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + gk, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: S.history })
-        });
-        const d = await r.json();
-        if (d.candidates) return d.candidates[0].content.parts[0].text;
-    } catch(e) {}
-
-    try {
-        const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer "+ok, "HTTP-Referer": "https://mxdk9.github.io" },
-            body: JSON.stringify({ model: "google/gemini-2.0-flash-exp:free", messages: [{role:"user",content:p}] })
-        });
-        const d = await r.json();
-        if (d.choices) return d.choices[0].message.content;
-    } catch(e) {}
-
-    return "Neural link congested, Boss. Please try a simple command like 'Hello'.";
+        const system = "You are KD, an advanced AI created by KXD. If asked for image, only say [IMAGE: prompt]. Refer to user as Boss. Keep answers concise and smart.";
+        const fullPrompt = `${system}\n\nUser: ${p}`;
+        const r = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai`);
+        const t = await r.text();
+        return t || "Neural link unstable. Retry, Boss.";
+    } catch(e) { return "System rebooting. One moment, Boss."; }
 }
 
 async function handle(v) {
@@ -52,4 +39,4 @@ async function handle(v) {
 
 document.getElementById('btn').onclick = () => { const i = document.getElementById('txt'); handle(i.value); i.value = ''; };
 document.getElementById('txt').onkeypress = (e) => { if (e.key === 'Enter') document.getElementById('btn').click(); };
-window.onload = () => { addMsg('ai', "Neural link secured for meeting. Native Google Engine online. KD is ready, Boss."); };
+window.onload = () => { addMsg('ai', "Neural link secured for meeting. Unlimited Core online. KD is ready, Boss."); };
